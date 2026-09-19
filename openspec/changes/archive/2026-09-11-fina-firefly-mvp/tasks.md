@@ -30,4 +30,4 @@
 
 ## 7. Verification
 
-- [x] 7.1 Run `swift test`, `swift build -c release`, and `npx openspec validate --all --no-interactive` and verify all commands succeed
+- [x] 7.1 Run `swift test`, `swift build -c release`, and `pnpm exec openspec validate --all --no-interactive` and verify all commands succeed

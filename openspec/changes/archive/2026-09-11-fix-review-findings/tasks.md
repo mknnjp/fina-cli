@@ -21,4 +21,4 @@
 ## 5. Verification
 
 - [x] 5.1 Run full `swift test` suite and verify all tests pass with no regressions
-- [x] 5.2 Run `npx openspec validate --all --no-interactive` and verify the change validates cleanly
+- [x] 5.2 Run `pnpm exec openspec validate --all --no-interactive` and verify the change validates cleanly
