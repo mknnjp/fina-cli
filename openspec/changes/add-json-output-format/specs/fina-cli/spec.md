@@ -25,6 +25,44 @@ The system SHALL render all success and error output as human-readable plain tex
 - **WHEN** the user requests JSON output and the command fails
 - **THEN** the command writes a single valid JSON document to standard error containing the error message, writes nothing to standard output, and exits with a non-zero status
 
+### Requirement: Single-split transaction creation
+The system SHALL create withdrawal, deposit, and transfer transactions with exactly one split via `fina transactions create`.
+
+#### Scenario: Create withdrawal by account names
+- **WHEN** the user provides type, date, amount, description, source name, and destination name
+- **THEN** the system creates the transaction and prints its ID in plain text
+
+#### Scenario: Create by account IDs
+- **WHEN** the user provides source and destination as numeric IDs
+- **THEN** the system resolves them as IDs without name lookup
+
+#### Scenario: Reject multi-split
+- **WHEN** the payload would contain more than one split
+- **THEN** the CLI rejects the input with an error stating single-split only, rendered in the selected output format
+
+#### Scenario: Reject missing required fields
+- **WHEN** the user omits any of type, date, amount, description, source, or destination
+- **THEN** the CLI exits non-zero with an error naming the missing fields, rendered in the selected output format, and sends no API request
+
+#### Scenario: Reject invalid type or date
+- **WHEN** the user provides a type other than withdrawal, deposit, or transfer, or a date not in `YYYY-MM-DD` shape
+- **THEN** the CLI exits non-zero with an error stating the expected values, rendered in the selected output format, and sends no API request
+
+### Requirement: Transaction update
+The system SHALL update all API-updatable fields of a single-split transaction via `fina transactions update <id>`.
+
+#### Scenario: Update description and amount
+- **WHEN** the user provides a transaction ID plus updated fields
+- **THEN** the system sends a PUT request with `transaction_journal_id` and prints the updated ID
+
+#### Scenario: Reject empty update
+- **WHEN** the user provides a transaction ID with no updatable fields
+- **THEN** the CLI exits non-zero with an error stating at least one field is required, rendered in the selected output format, and sends no API request
+
+#### Scenario: Reject invalid update field values
+- **WHEN** the user provides an invalid type or malformed date in an update
+- **THEN** the CLI exits non-zero with an error stating the expected values, rendered in the selected output format, and sends no API request
+
 ## ADDED Requirements
 
 ### Requirement: Output format selection
