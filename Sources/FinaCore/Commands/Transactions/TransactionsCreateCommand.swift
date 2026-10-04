@@ -28,14 +28,10 @@ public struct TransactionsCreate: AsyncParsableCommand {
     @Option(name: .long, help: "Currency code.")
     public var currency: String?
 
-    public init() {
-        self.type = ""
-        self.date = ""
-        self.amount = ""
-        self.description = ""
-        self.source = ""
-        self.destination = ""
-    }
+    /// Required options and the positional id are populated by the parser's
+    /// decoder. Assigning placeholder values here would resolve the argument
+    /// wrappers before parsing, which crashes swift-argument-parser.
+    public init() {}
 
     public func run() async throws {
         try TransactionInputValidator.validateCreate(
