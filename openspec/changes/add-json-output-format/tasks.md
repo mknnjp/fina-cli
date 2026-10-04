@@ -14,7 +14,7 @@
 - [x] 2.1 Attach `@OptionGroup GlobalOptions` to `Fina` in `Sources/FinaCore/Commands/FinaCommand.swift` and verify `swift build` succeeds
 - [x] 2.2 Implement `Fina.main() async` to delegate parse failures to `Fina.exit(withError:)` and route runtime errors through `CommandErrorReporter` before exiting non-zero, and verify `fina --help` still prints help and exits zero
 - [x] 2.3 Attach `@OptionGroup GlobalOptions` to `Accounts` and `AccountsList`, implement `validate()` to record the declared format, pass `resolvedFormat` into `CommandContext`, and verify `swift build` succeeds
-- [x] 2.4 Attach `@OptionGroup GlobalOptions` to `Transactions`, `TransactionsList`, `TransactionsCreate`, and `TransactionsUpdate`, implement `validate()` on each, initialize it in `TransactionsList`'s test-facing `init(limit:account:)`, pass `resolvedFormat` into `CommandContext`, and verify `swift build` succeeds
+- [x] 2.4 Attach `@OptionGroup GlobalOptions` to `Transactions`, `TransactionsList`, `TransactionsCreate`, and `TransactionsUpdate`, implement `validate()` on each, keep the empty `init()` required by the parser-crash fix, pass `resolvedFormat` into `CommandContext`, and verify `swift build` succeeds
 
 ## 3. Tests
 
