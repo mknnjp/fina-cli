@@ -1,7 +1,7 @@
 import Foundation
 
-/// JSON rendering stub for future `--format json` support.
-/// Not wired to commands yet; reserves the format seam without changing behavior.
+/// JSON rendering for `--format json`. Emits compact single-line documents
+/// with sorted keys so output stays machine-parseable.
 public struct JSONFormatter: Sendable {
     public init() {}
 
@@ -20,6 +20,10 @@ public struct JSONFormatter: Sendable {
 
     public func resultJSON(id: String, action: String) -> String {
         jsonString(["action": action, "id": id])
+    }
+
+    public func errorJSON(_ message: String) -> String {
+        jsonString(["error": message])
     }
 
     private func jsonString(_ value: [String: Any]) -> String {

@@ -12,7 +12,8 @@ A fast, type-safe command-line client for [Firefly III](https://www.firefly-iii.
 | ✏️ `transactions update` | Update a single-split transaction by ID |
 | ⚙️ Flexible config | JSON config file with environment-variable fallback |
 | 🔒 Secure by default | Config file permissions hardened to `0600` on load |
-| 🧪 Tested | Unit tests with fixture-backed networking mocks |
+| � Scriptable | `--format json` emits machine-readable output for piping into `jq` or scripts |
+| �🧪 Tested | Unit tests with fixture-backed networking mocks |
 
 ## 📋 Requirements
 
@@ -103,10 +104,10 @@ fina transactions --help
 
 | Command | Purpose | Key options |
 |---|---|---|
-| 🏦 `fina accounts list` | List accounts with balances | — |
-| 🧾 `fina transactions list` | List transactions | `--limit <n>`, `--account <id-or-name>` |
-| ➕ `fina transactions create` | Create a single-split transaction | `--type`, `--date`, `--amount`, `--description`, `--source`, `--destination`, `--currency` |
-| ✏️ `fina transactions update <id>` | Update a single-split transaction | `--journal-id`, `--type`, `--date`, `--amount`, `--description`, `--source`, `--destination`, `--currency` |
+| 🏦 `fina accounts list` | List accounts with balances | `--format <plain\|json>` |
+| 🧾 `fina transactions list` | List transactions | `--limit <n>`, `--account <id-or-name>`, `--format <plain\|json>` |
+| ➕ `fina transactions create` | Create a single-split transaction | `--type`, `--date`, `--amount`, `--description`, `--source`, `--destination`, `--currency`, `--format <plain\|json>` |
+| ✏️ `fina transactions update <id>` | Update a single-split transaction | `--journal-id`, `--type`, `--date`, `--amount`, `--description`, `--source`, `--destination`, `--currency`, `--format <plain\|json>` |
 
 ### 🏦 List accounts
 
@@ -182,10 +183,75 @@ fina transactions update 12 --journal-id 45 --date 2026-09-10 --currency JPY
 
 ## 📤 Output formats
 
+Every command accepts `--format <plain|json>` (short `-f`). The default is `plain`, so existing
+invocations are unchanged.
+
 | Format | Status | Description |
 |---|---|---|
 | 📝 `plain` | ✅ Default | Fixed-width aligned tables for humans |
-| 🧩 `json` | 🚧 Reserved | `JSONFormatter` seam exists; commands currently emit `plain` |
+| 🧩 `json` | ✅ Available | Compact single-line JSON for scripts |
+
+The option is accepted at any command depth — both positions below are equivalent:
+
+```bash
+fina --format json accounts list
+fina accounts list --format json
+```
+
+### 📝 Plain text (default)
+
+```bash
+fina accounts list
+```
+
+```text
+ID  NAME            TYPE     CURRENCY  BALANCE
+1   Main Checking   asset    JPY       125000
+2   Cash Wallet     asset    JPY       12000
+```
+
+### 🧩 JSON
+
+```bash
+fina accounts list --format json
+```
+
+```json
+{"accounts":[{"balance":"125000","currency":"JPY","id":"1","name":"Main Checking","type":"asset"},{"balance":"12000","currency":"JPY","id":"2","name":"Cash Wallet","type":"asset"}]}
+```
+
+| Command | Top-level JSON key |
+|---|---|
+| `accounts list` | `accounts` |
+| `transactions list` | `transactions` |
+| `transactions create` / `update` | `action`, `id` |
+
+Piping into `jq`:
+
+```bash
+# Account names only
+fina accounts list --format json | jq -r '.accounts[].name'
+
+# Transactions over 1000, most recent first
+fina transactions list --limit 20 --format json | jq '.transactions[] | select(.amount > 1000)'
+
+# Capture the ID of a created transaction
+id=$(fina transactions create --type withdrawal --date 2026-09-11 --amount 1500 \
+  --description "Coffee" --source "Main Checking" --destination "Cafe" --format json | jq -r '.id')
+```
+
+### ⚠️ Errors
+
+Success output goes to **stdout**; errors go to **stderr** and exit non-zero. With
+`--format json`, errors are wrapped in an `error` object:
+
+```bash
+$ fina accounts list --format json
+# stderr:
+{"error":"Missing config at /home/you/.config/fina/config.json. Expected JSON with required fields: baseURL, token."}
+```
+
+> 💡 Tip: argument errors (for example an unknown `--format` value) are always plain text with a usage hint, even when `--format json` is requested. Help output is plain text too.
 
 ## 🏗️ Project structure
 
