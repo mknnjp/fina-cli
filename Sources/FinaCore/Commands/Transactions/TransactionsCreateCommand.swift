@@ -62,8 +62,4 @@ public struct TransactionsCreate: AsyncParsableCommand, FormatAware {
         let id = try await client.createTransaction(split: split)
         print(context.formatter.resultLines(id: id, action: "Created transaction"))
     }
-
-    public mutating func validate() throws {
-        globalOptions.recordDeclaredFormat()
-    }
 }

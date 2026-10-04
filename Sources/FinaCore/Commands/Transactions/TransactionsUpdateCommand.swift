@@ -62,8 +62,4 @@ public struct TransactionsUpdate: AsyncParsableCommand, FormatAware {
         let updatedId = try await client.updateTransaction(id: id, fields: fields)
         print(context.formatter.resultLines(id: updatedId, action: "Updated transaction"))
     }
-
-    public mutating func validate() throws {
-        globalOptions.recordDeclaredFormat()
-    }
 }
