@@ -8,6 +8,6 @@
   },
   "version": "1.0.0",
   "devDependencies": {
-    "@fission-ai/openspec": "^1.13.0"
+    "@fission-ai/openspec": "^1.16.0"
   }
 }
